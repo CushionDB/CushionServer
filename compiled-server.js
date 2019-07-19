@@ -25,14 +25,15 @@ server.post('/signup', function (req, res) {
   var username = req.body.username;
   var password = req.body.password;
   var url = "http://127.0.0.1:5984/_users/org.couchdb.user:".concat(username);
+  var data = {
+    name: username,
+    password: password,
+    roles: [],
+    type: 'user'
+  };
   var options = {
     method: 'PUT',
-    data: {
-      name: username,
-      password: password,
-      roles: [],
-      type: 'user'
-    },
+    body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
