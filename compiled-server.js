@@ -74,12 +74,13 @@ server.post('/signin', function (req, res) {
     }
   };
   return (0, _nodeFetch["default"])("http://127.0.0.1:5984/pouchdb_users/_find", options).then(function (response) {
-    console.log('[RESPONSE] ', response.json().then(function (res) {
-      console.log(res);
-    }));
-    var user = response.body.docs[0];
+    return response.json();
+  }).then(function (response) {
+    var user = response.docs[0];
 
     if (_bcrypt["default"].compareSync(req.body.password, user.password)) {
+      debugger;
+
       var token = _jsonwebtoken["default"].sign({
         userId: user._id
       }, config.tokenKey);

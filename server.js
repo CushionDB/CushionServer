@@ -71,11 +71,10 @@ server.post('/signin',function(req,res){
     }
   }
   return fetch(`http://127.0.0.1:5984/pouchdb_users/_find`, options)
+    .then(response => response.json())
     .then(response =>  {
-      console.log('[RESPONSE] ', response.json().then(res =>{
-        console.log(res);
-      } ));
-      const user = response.body.docs[0];
+      const user = response.docs[0];
+
       if(bcrypt.compareSync(req.body.password, user.password)){
         let token = jwt.sign({userId:user._id}, config.tokenKey);
         res.status(200).json({
@@ -97,7 +96,6 @@ server.post('/signup', (req, res) => {
   console.log('------------------');
   const username = req.body.username;
   const password = req.body.password;
-
 
   // let salt = bcrypt.genSaltSync(saltRounds);
 
