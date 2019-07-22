@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel server.js --out-file compiled-server.js && node compiled-server.js",
+    "start": "babel server.js --out-file compiled-server.js && node compiled-server.js"
   },
   "author": "",
   "license": "ISC",

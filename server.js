@@ -14,6 +14,7 @@ server.use(cors());
 server.use(express.json());
 
 const PORT = 3001;
+
 const config = {
   couchBaseUrl: 'http://localhost:5984/',
   admin: 'admin',
@@ -61,7 +62,7 @@ server.post('/signin',function(req,res){
       "selector":{
         "username": req.body.username ,
       },
-      "fields": ["password", "_id"],
+      "fields": ["password", "_id", "username"],
       "limit":1,
     }),
     headers:{
@@ -120,7 +121,8 @@ server.post('/signup', (req, res) => {
     },
   };
 
-  return fetch(url, options).then(response =>  {
+  return fetch(url, options)
+    .then(response =>  {
     console.log('[RESPONSE] ', response);
     res.send(response);
   }).catch(error => {

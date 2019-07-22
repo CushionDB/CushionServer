@@ -64,7 +64,7 @@ server.post('/signin', function (req, res) {
       "selector": {
         "username": req.body.username
       },
-      "fields": ["password", "_id"],
+      "fields": ["password", "_id", "username"],
       "limit": 1
     }),
     headers: {
@@ -79,8 +79,6 @@ server.post('/signin', function (req, res) {
     var user = response.docs[0];
 
     if (_bcrypt["default"].compareSync(req.body.password, user.password)) {
-      debugger;
-
       var token = _jsonwebtoken["default"].sign({
         userId: user._id
       }, config.tokenKey);
