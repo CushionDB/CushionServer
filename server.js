@@ -96,23 +96,23 @@ server.post('/signup', (req, res) => {
   console.log('[REQUEST BODY] ', req.body);
   console.log('------------------');
   const username = req.body.username;
-  const password = req.body.password;
+  // const password = req.body.password;
 
   // let salt = bcrypt.genSaltSync(saltRounds);
 
-  // let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
-  let url = `http://127.0.0.1:5984/pouchdb_users/`;
+  let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
+  // let url = `http://127.0.0.1:5984/pouchdb_users/`;
   let data = {
-    username: username,
-    password: bcrypt.hashSync(password, saltRounds),
-    // roles: [],
-    // type: 'user'
+    name: username,
+    password: req.body.password,
+    roles: [],
+    type: 'user'
   };
 
   // bcrypt.compareSync(password, hash); true / false
 
   let options = {
-    method: 'POST',
+    method: 'PUT',
     body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
@@ -124,8 +124,11 @@ server.post('/signup', (req, res) => {
   return fetch(url, options)
     .then(response =>  {
     console.log('[RESPONSE] ', response);
+
+    // TODO HANDLE 400 STATUS FROM SERVER
     res.send(response);
   }).catch(error => {
+    // NETWORK ERROR GOES IN HERE
     console.log('[ERROR] ', error);
   });
 })

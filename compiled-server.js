@@ -103,20 +103,20 @@ server.post('/signin', function (req, res) {
 server.post('/signup', function (req, res) {
   console.log('[REQUEST BODY] ', req.body);
   console.log('------------------');
-  var username = req.body.username;
-  var password = req.body.password; // let salt = bcrypt.genSaltSync(saltRounds);
-  // let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
+  var username = req.body.username; // const password = req.body.password;
+  // let salt = bcrypt.genSaltSync(saltRounds);
 
-  var url = "http://127.0.0.1:5984/pouchdb_users/";
+  var url = "http://127.0.0.1:5984/_users/org.couchdb.user:".concat(username); // let url = `http://127.0.0.1:5984/pouchdb_users/`;
+
   var data = {
-    username: username,
-    password: _bcrypt["default"].hashSync(password, saltRounds) // roles: [],
-    // type: 'user'
-
+    name: username,
+    password: req.body.password,
+    roles: [],
+    type: 'user'
   }; // bcrypt.compareSync(password, hash); true / false
 
   var options = {
-    method: 'POST',
+    method: 'PUT',
     body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
@@ -125,9 +125,11 @@ server.post('/signup', function (req, res) {
     }
   };
   return (0, _nodeFetch["default"])(url, options).then(function (response) {
-    console.log('[RESPONSE] ', response);
+    console.log('[RESPONSE] ', response); // TODO HANDLE 400 STATUS FROM SERVER
+
     res.send(response);
   })["catch"](function (error) {
+    // NETWORK ERROR GOES IN HERE
     console.log('[ERROR] ', error);
   });
 }); // server.post('/signin',)
