@@ -96,20 +96,14 @@ server.post('/signup', (req, res) => {
   console.log('[REQUEST BODY] ', req.body);
   console.log('------------------');
   const username = req.body.username;
-  // const password = req.body.password;
-
-  // let salt = bcrypt.genSaltSync(saltRounds);
 
   let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
-  // let url = `http://127.0.0.1:5984/pouchdb_users/`;
   let data = {
     name: username,
     password: req.body.password,
     roles: [],
     type: 'user'
   };
-
-  // bcrypt.compareSync(password, hash); true / false
 
   let options = {
     method: 'PUT',
