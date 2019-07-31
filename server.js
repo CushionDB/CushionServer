@@ -194,7 +194,7 @@ server.post('/subscribe', (req, res) => {
     });
 });
 
-server.post('/notify', (req, res) => {
+server.post('/triggerSync', (req, res) => {
   const username = req.body.username;
   let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
   let options = {
@@ -211,6 +211,7 @@ server.post('/notify', (req, res) => {
     response.json().then(json => {
       const subscriptions = json.subscriptions;
       const payload = JSON.stringify({
+        action: 'SYNC',
         title: 'Updated!'
       });
 
@@ -221,7 +222,6 @@ server.post('/notify', (req, res) => {
   })
 });
 
-// server.post('/signin',)
 server.listen(PORT, () => {
   console.log(`Cushion server is running on ${PORT}`);
 });

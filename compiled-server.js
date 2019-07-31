@@ -190,7 +190,7 @@ server.post('/subscribe', function (req, res) {
     console.log('[GET REV ERROR] ', err);
   });
 });
-server.post('/notify', function (req, res) {
+server.post('/triggerSync', function (req, res) {
   var username = req.body.username;
   var url = "http://127.0.0.1:5984/_users/org.couchdb.user:".concat(username);
   var options = {
@@ -205,6 +205,7 @@ server.post('/notify', function (req, res) {
     response.json().then(function (json) {
       var subscriptions = json.subscriptions;
       var payload = JSON.stringify({
+        action: 'SYNC',
         title: 'Updated!'
       });
       subscriptions.forEach(function (sub) {
@@ -212,8 +213,7 @@ server.post('/notify', function (req, res) {
       });
     });
   });
-}); // server.post('/signin',)
-
+});
 server.listen(PORT, function () {
   console.log("Cushion server is running on ".concat(PORT));
 });
