@@ -212,6 +212,7 @@ server.post('/triggerSync', function (req, res) {
         _webPush["default"].sendNotification(sub, payload);
       });
     });
+    res.status(200).json({});
   });
 });
 server.listen(PORT, function () {

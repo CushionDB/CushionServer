@@ -219,6 +219,9 @@ server.post('/triggerSync', (req, res) => {
         webPush.sendNotification(sub, payload);
       })
     });
+
+    res.status(200).json({});
+
   })
 });
 
