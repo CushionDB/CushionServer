@@ -211,8 +211,8 @@ server.post('/triggerSync', (req, res) => {
     response.json().then(json => {
       const subscriptions = json.subscriptions;
       const payload = JSON.stringify({
-        action: 'SYNC',
-        title: 'Updated!'
+        title: 'sync',
+        id: 'SYNC'
       });
 
       subscriptions.forEach(sub => {

@@ -205,8 +205,8 @@ server.post('/triggerSync', function (req, res) {
     response.json().then(function (json) {
       var subscriptions = json.subscriptions;
       var payload = JSON.stringify({
-        action: 'SYNC',
-        title: 'Updated!'
+        title: 'sync',
+        id: 'SYNC'
       });
       subscriptions.forEach(function (sub) {
         _webPush["default"].sendNotification(sub, payload);
