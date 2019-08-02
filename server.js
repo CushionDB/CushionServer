@@ -1,63 +1,67 @@
 import express from 'express';
-import btoa from 'btoa';
 import fetch from 'node-fetch';
-import cors from 'cors';
 import webPush from 'web-push';
+import btoa from 'btoa';
 
-// import jwt from 'jsonwebtoken';
-// import bcrypt from 'bcrypt';
-// const saltRounds = 2;
+// IF DEVELOPMENT
+import cors from 'cors';
 
 const server = express();
-server.use(cors());
+const PORT = 3001;
+
 server.use(express.json());
 
+// IF DEVELOPMENT
+server.use(cors());
+
+// GET FROM CONFIG FILE. GENERATE KEYS AS PART OF INIT SCRIPT
 const publicVapidKey = 'BCA04yoTGRbqfe__mD3jXmNxYWCKF2jcPY4Kbas7GqV3o7vS43kahAucdIQF_aFix1mCkkGQzRwqob53atFxHJg';
 const privateVapidKey = 'd06XlKrpPtkRrYc0EyEXZ2r2k14H1vUkj5GfOoEate0';
 
+// GET MAIL ADDRESS FROM CONFIG FILE
 webPush.setVapidDetails('mailto:test@example.com', publicVapidKey, privateVapidKey);
 
-const PORT = 3001;
-
+// TRANSFER TO ACTUAL CONFIG FILE
 const config = {
   couchBaseUrl: 'http://localhost:5984/',
   admin: 'admin',
   adminPass: 'admin',
-  tokenKey: '12345678'
 };
 
-server.use((req,res,next) => {
-  try {
-    const token = req.headers.authorization.split(' ')[1];
-    jwt.verify(token, config.tokenKey, (err, payload) => {
-      console.log(payload);
+// ||| DELETE |||
 
-      if(payload){
-        let options = {
-          method: 'GET',
-          headers:{
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: 'Basic '+btoa('admin:admin')
-          }
-        }
-        return fetch(`http://127.0.0.1:5984/pouchdb_users/${payload.userId}`, options)
-          .then(response =>  {
-            console.log('[RESPONSE] ', response);
-            req.user = response.body;
-            console.log(req.user);
-            next();
-          }).catch(error => {
-            console.log('[ERROR] ', error);
-          });
-      } else {
-        next();
-      }
-    });
-  } catch {
-    next();
-  }
-});
+// server.use((req,res,next) => {
+//   try {
+//     const token = req.headers.authorization.split(' ')[1];
+//     jwt.verify(token, config.tokenKey, (err, payload) => {
+//       console.log(payload);
+
+//       if(payload){
+//         let options = {
+//           method: 'GET',
+//           headers:{
+//             "Content-Type": "application/json",
+//             Accept: "application/json",
+//             Authorization: 'Basic '+btoa('admin:admin')
+//           }
+//         }
+//         return fetch(`http://127.0.0.1:5984/pouchdb_users/${payload.userId}`, options)
+//           .then(response =>  {
+//             console.log('[RESPONSE] ', response);
+//             req.user = response.body;
+//             console.log(req.user);
+//             next();
+//           }).catch(error => {
+//             console.log('[ERROR] ', error);
+//           });
+//       } else {
+//         next();
+//       }
+//     });
+//   } catch {
+//     next();
+//   }
+// });
 
 // server.post('/signin',function(req,res) {
 //   let options = {
@@ -96,25 +100,26 @@ server.use((req,res,next) => {
 //     });
 // });
 
+// ||| DELETE |||
+
+// CHANGE ADDRESS TO `api/signup` ?
 server.post('/signup', (req, res) => {
-  console.log('[REQUEST BODY] ', req.body);
-  console.log('------------------');
   const username = req.body.username;
-  // const password = req.body.password;
+  const password = req.body.password;
 
-  // let salt = bcrypt.genSaltSync(saltRounds);
-
+  // CHANGE ALL lets to CONSTS
+  // GET FROM UTIL FUNC -> USERADDRESS(COUCH_BASE_URL, USERNAME)
   let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
   // let url = `http://127.0.0.1:5984/pouchdb_users/`;
+
   let data = {
     name: username,
+    // GET FROM VAR
     password: req.body.password,
     roles: [],
     type: 'user',
     subscriptions: [],
   };
-
-  // bcrypt.compareSync(password, hash); true / false
 
   let options = {
     method: 'PUT',
@@ -122,10 +127,13 @@ server.post('/signup', (req, res) => {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      // GET ADMIN NAME AND PASS FROM CONFIG FILE 
       Authorization: 'Basic '+btoa('admin:admin')
     },
   };
 
+  // Why are we returning some fetches but not others?
+  // Change fetches to await?
   return fetch(url, options)
     .then(response =>  {
     console.log('[RESPONSE] ', response);
@@ -138,23 +146,29 @@ server.post('/signup', (req, res) => {
   });
 });
 
+// change endpoing to something more descriptive
 server.post('/subscribe', (req, res) => {
   const username = req.body.username;
   const subscription = req.body.subscription;
   subscription.device = req.body.device;
+
   console.log('[SUBSCRIPTION] ', subscription);
 
+  // SEE NOTE FROM ABOVE FUNC
   let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
 
   let options = {
     method: 'GET',
     headers: {
+      // HEADERS COULD BE REFACTORES
       "Content-Type": "application/json",
       Accept: "application/json",
+      // SEE NOTE ABOVE
       Authorization: 'Basic '+btoa('admin:admin')
     },
   };
 
+  // CHANGE VARIABLE NAMES (getRes etc)
   fetch(url, options)
     .then(getRes => {
       getRes.json().then(json => {
@@ -174,10 +188,12 @@ server.post('/subscribe', (req, res) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            // SEE NOTE ABOVE
             Authorization: 'Basic '+btoa('admin:admin')
           },
         };
 
+        // SEE NOTE ABOUT RETURNING FETCHES
         return fetch(url, options)
           .then(response =>  {
           console.log('[RESPONSE] ', response);
@@ -190,18 +206,24 @@ server.post('/subscribe', (req, res) => {
         });
       })
     }).catch(err => {
+      // USER NOT FOUND
       console.log('[GET REV ERROR] ', err);
     });
 });
 
+// CHANGE ROUTE NAME
 server.post('/triggerSync', (req, res) => {
+  // SAME NOTES AS ABOVE
+
   const username = req.body.username;
+  //
   let url = `http://127.0.0.1:5984/_users/org.couchdb.user:${username}`;
   let options = {
     method: 'GET',
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      //
       Authorization: 'Basic '+btoa('admin:admin')
     },
   };
@@ -216,15 +238,18 @@ server.post('/triggerSync', (req, res) => {
       });
 
       subscriptions.forEach(sub => {
+        // ONLY SEND PUSH NOTIFICATION IF NOT FROM CURRENT DEVICE
         webPush.sendNotification(sub, payload);
       })
     });
 
+    // WEIRD RESPONSE
     res.status(200).json({});
-
   })
+  // ADD CATCH FOR ERRORS
 });
 
+// MESSAHE COULD BE MORE DESCRIPTIVE
 server.listen(PORT, () => {
   console.log(`Cushion server is running on ${PORT}`);
 });
