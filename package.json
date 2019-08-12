@@ -4,16 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel server.js --out-file compiled-server.js && node compiled-server.js"
+    "clean": "rm -rf build && mkdir build && mkdir build/util",
+    "build-server": "babel ./server.js --out-dir ./build",
+    "build-utils": "babel ./util/util.js --out-dir ./build/util",
+    "build": "npm run clean && npm run build-utils && npm run build-server",
+    "dev": "npm run build && node ./build/server.js",
+    "start": "./build/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.6",
     "btoa": "^1.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.0",
     "web-push": "^3.3.5"
   },

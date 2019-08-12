@@ -1,0 +1,14 @@
+{
+	"vapid-keys": {
+		"private": "d06XlKrpPtkRrYc0EyEXZ2r2k14H1vUkj5GfOoEate0",
+		"public": "BCA04yoTGRbqfe__mD3jXmNxYWCKF2jcPY4Kbas7GqV3o7vS43kahAucdIQF_aFix1mCkkGQzRwqob53atFxHJg"
+	},
+	"app": {
+		"email": "test@example.com"
+	},
+	"cushion": {
+		"baseURL": "http://localhost:5984/",
+		"admin": "admin",
+		"password": "admin"
+	}
+}
