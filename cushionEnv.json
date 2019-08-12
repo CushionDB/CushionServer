@@ -4,9 +4,10 @@
 		"public": "BCA04yoTGRbqfe__mD3jXmNxYWCKF2jcPY4Kbas7GqV3o7vS43kahAucdIQF_aFix1mCkkGQzRwqob53atFxHJg"
 	},
 	"app": {
+		"URL": "http://localhost:3000",
 		"email": "test@example.com"
 	},
-	"cushion": {
+	"couch": {
 		"baseURL": "http://localhost:5984/",
 		"admin": "admin",
 		"password": "admin"

@@ -4,19 +4,28 @@ export const defaultNewUserDoc = (name, password) => (
     name,
     password,
     roles: [],
-    type: 'user',
+    type: "user",
     subscriptions: [],
   }
 );
 
-export const fetchAuthAPIOptions = ({ method, data, auth }) => (
-	{
+export const fetchAuthAPIOptions = ({ method, data, auth }) => {
+	const opts = {		
 		method,
-    body: JSON.stringify(data),
     headers: {
 		  "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: `Basic ${btoa(`${auth.name}:${auth.pass}`)}`
+      Authorization: auth
     }
-  }
-)
+   };
+
+  return data ? { ...opts, body: JSON.stringify(data) } : opts;
+}
+
+export const addSubscriptionToUserDoc = (userDoc, sub) => ({
+	...userDoc,
+	subscriptions: [
+		...subscriptions,
+		sub
+	]
+}

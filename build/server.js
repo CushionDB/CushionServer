@@ -50,72 +50,68 @@ server.get('/', function (req, res) {
   res.send('CushionServer is running');
 });
 server.post('/signup', function (req, res) {
-  console.log('[REQUEST BODY] ', req.body);
-  console.log('------------------');
   var username = req.body.username;
-  var password = req.body.username;
+  var password = req.body.password;
   var url = utils.couchUserAddress(couchDetails.baseURL, username);
   var data = utils.defaultNewUserDoc(username, password);
   var fetchOptions = utils.fetchAuthAPIOptions({
     method: 'PUT',
     data: data,
-    auth: {
-      name: couchDetails.admin,
-      pass: couchDetails.password
-    }
+    auth: 'Basic ' + (0, _btoa["default"])("".concat(couchDetails.admin, ":").concat(couchDetails.password))
   });
+  console.log(couchDetails);
   return (0, _nodeFetch["default"])(url, fetchOptions).then(function (response) {
-    console.log('[RESPONSE] ', response); // TODO HANDLE 400 STATUS FROM SERVER
-
-    res.send(response);
+    res.status(response.status);
+    return response.json();
+  }).then(function (json) {
+    return res.send(json);
   })["catch"](function (error) {
-    // NETWORK ERROR GOES IN HERE
-    console.log('[ERROR] ', error);
+    res.status(500);
+    res.send({
+      error: 'Database cannot be reached'
+    });
   });
 });
-server.post('/subscribe', function (req, res) {
+server.post('/subscribe_device_to_notifications', function (req, res) {
   var username = req.body.username;
   var subscription = req.body.subscription;
   subscription.device = req.body.device;
   console.log('[SUBSCRIPTION] ', subscription);
-  var url = "http://127.0.0.1:5984/_users/org.couchdb.user:".concat(username);
-  var options = {
+  var url = utils.couchUserAddress(couchDetails.baseURL, username);
+  var fetchOptions = utils.fetchAuthAPIOptions({
     method: 'GET',
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: 'Basic ' + (0, _btoa["default"])('admin:admin')
-    }
-  };
-  (0, _nodeFetch["default"])(url, options).then(function (getRes) {
-    getRes.json().then(function (json) {
-      var rev = json._rev;
-      console.log('[GET RES JSON] ', json);
+    auth: 'Basic ' + (0, _btoa["default"])("".concat(couchDetails.admin, ":").concat(couchDetails.password))
+  });
+  (0, _nodeFetch["default"])(url, fetchOptions).then(function (response) {
+    return response.json();
+  }).then(function (userDoc) {
+    var data = _objectSpread({}, userDoc, {
+      subscriptions: [].concat(_toConsumableArray(userDoc.subscriptions), [subscription])
+    });
 
-      var data = _objectSpread({}, json, {
-        subscriptions: [].concat(_toConsumableArray(json.subscriptions), [subscription])
-      });
-
-      options = {
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: 'Basic ' + (0, _btoa["default"])('admin:admin')
-        }
-      };
-      return (0, _nodeFetch["default"])(url, options).then(function (response) {
-        console.log('[RESPONSE] ', response); // TODO HANDLE 400 STATUS FROM SERVER
-
-        res.send(response);
-      })["catch"](function (error) {
-        // NETWORK ERROR GOES IN HERE
-        console.log('[ERROR] ', error);
+    fetchOptions = utils.fetchAuthAPIOptions({
+      method: 'PUT',
+      data: data,
+      auth: 'Basic ' + (0, _btoa["default"])("".concat(couchDetails.admin, ":").concat(couchDetails.password))
+    });
+    console.log(fetchOptions);
+    return (0, _nodeFetch["default"])(url, fetchOptions).then(function (response) {
+      console.log(response);
+      res.status(response.status);
+      return response.json();
+    }).then(function (json) {
+      return res.send(json);
+    })["catch"](function (_) {
+      res.status(500);
+      res.send({
+        error: 'Database cannot be reached'
       });
     });
-  })["catch"](function (err) {
-    console.log('[GET REV ERROR] ', err);
+  })["catch"](function (_) {
+    res.status(500);
+    res.send({
+      error: 'Database cannot be reached'
+    });
   });
 });
 server.post('/triggerSync', function (req, res) {
