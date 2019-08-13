@@ -23,12 +23,23 @@ var PRODUCTION = process.env.NODE_ENV === "prod";
 var envVars = utils.getEnvVars();
 var server = (0, _express["default"])();
 
+var prodCors = function prodCors(req, res, next) {
+  var whitelist = ['http://localhost', 'https://localhost'];
+  var origin = req.headers.origin;
+
+  if (whitelist.indexOf(origin) > -1) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  next();
+};
+
 if (!PRODUCTION) {
   server.use((0, _cors["default"])());
 } else {
-  server.use((0, _cors["default"])({
-    origin: envVars.appURL
-  }));
+  server.use(prodCors);
 }
 
 server.use(_express["default"].json());
@@ -66,7 +77,6 @@ server.post('/subscribe_device_to_notifications', function (req, res) {
   })).then(function (response) {
     return response.json();
   }).then(function (userDoc) {
-    console.log(utils.addSubscriptionToUserDoc(userDoc, subscription));
     return (0, _nodeFetch["default"])(userCouchUrl, utils.fetchAuthAPIOptions({
       method: 'PUT',
       data: utils.addSubscriptionToUserDoc(userDoc, subscription)
@@ -91,12 +101,22 @@ server.post('/trigger_update_user_devices', function (req, res) {
     return response.json();
   }).then(function (json) {
     var subscriptions = json.subscriptions;
+
+    if (subscriptions.length === 0) {
+      res.status(202);
+      res.send("User has no subscriptions");
+    }
+
     var payload = JSON.stringify({
       action: 'SYNC',
       title: 'Sync device'
     });
     subscriptions.forEach(function (sub) {
       _webPush["default"].sendNotification(sub, payload);
+    });
+    res.status(200);
+    res.send({
+      ok: true
     });
   })["catch"](function (_) {
     res.status(500);

@@ -10,8 +10,8 @@ const server = express();
 
 const prodCors = (req, res, next) => {
   const whitelist = [
-    'http://localhost:',
-    'https://localhost:',
+    'http://localhost',
+    'https://localhost',
   ];
   const origin = req.headers.origin;
   if (whitelist.indexOf(origin) > -1) {

@@ -95,10 +95,9 @@ var createEnvObject = function createEnvObject() {
   return {
     privateVapid: env.PRIVATE_VAPID,
     publicVapid: env.PUBLIC_VAPID,
-    appURL: env.APP_URL,
     appEmail: env.APP_EMAIL,
     couchBaseURL: env.COUCH_BASE_URL,
-    couchAdmin: env.COUCH_ADMIN,
-    couchPassword: env.COUCH_PASSWORD
+    couchAdmin: env.COUCHDB_USER,
+    couchPassword: env.COUCHDB_PASSWORD
   };
 };

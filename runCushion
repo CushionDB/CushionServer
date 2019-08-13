@@ -1,4 +1,3 @@
-export AUTH_HEADER="Authorization: Basic $(printf ${COUCHDB_USER}:${COUCHDB_PASSWORD} | base64)"
-echo "$AUTH_HEADER"
-until curl -f db:5984 -H "${AUTH_HEADER}"; do sleep 1; done
-./couchConfig && npm run
+AUTH_HEADER="Authorization: Basic $(printf ${COUCHDB_USER}:${COUCHDB_PASSWORD} | base64)"
+until curl -f backend:5984 -H "${AUTH_HEADER}"; do sleep 1; done
+./couchConfig && npm start
