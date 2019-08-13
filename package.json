@@ -9,7 +9,7 @@
     "build-utils": "babel ./util/util.js --out-dir ./build/util",
     "build": "npm run clean && npm run build-utils && npm run build-server",
     "dev": "npm run build && node ./build/server.js",
-    "start": "./build/server.js"
+    "start": "node ./build/server.js"
   },
   "author": "",
   "license": "ISC",

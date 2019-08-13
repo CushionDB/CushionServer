@@ -11,7 +11,7 @@ const envFile = fs.readFileSync('cushionEnv.json');
 const envVars = JSON.parse(envFile);
 const vapidKeys = envVars['vapid-keys'];
 const appDetails = envVars.app;
-const couchDetails = envVars.couch;
+const couch = envVars.couch;
 const PORT = 3001;
 
 const server = express();
@@ -37,11 +37,10 @@ server.post('/signup', (req, res) => {
   const password = req.body.password;
 
   return fetch(
-    utils.couchUserAddress(couchDetails.baseURL, username),
+    utils.couchUserAddress(couch.baseURL, username),
     utils.fetchAuthAPIOptions({
       method: 'PUT',
-      data,
-      auth: `Basic ${btoa(`${couchDetails.admin}:${couchDetails.password}`)}`
+      data
     })
   )
     
@@ -63,14 +62,11 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
   const subscription = req.body.subscription;
   subscription.device = req.body.device;
 
-  const userCouchUrl = utils.couchUserAddress(couchDetails.baseURL, username);
+  const userCouchUrl = utils.couchUserAddress(couch.baseURL, username);
 
   return fetch(
     userCouchUrl,
-    utils.fetchAuthAPIOptions({
-      method: 'GET',
-      auth: `Basic ${btoa(`${couchDetails.admin}:${couchDetails.password}`)}`
-    })
+    utils.fetchAuthAPIOptions({ method: 'GET' })
   )
 
     .then(response => response.json()).then(userDoc => {
@@ -79,7 +75,6 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
         utils.fetchAuthAPIOptions({
           method: 'PUT',
           data: utils.addSubscriptionToUserDoc(userDoc, subscription),
-          auth: `Basic ${btoa(`${couchDetails.admin}:${couchDetails.password}`)}`
         })
       )
 
@@ -100,14 +95,10 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
 server.post('/trigger_update_user_devices', (req, res) => {
   const username = req.body.username;
 
-  const url = utils.couchUserAddress(couchDetails.baseURL, username);
-
-  const fetchOptions = utils.fetchAuthAPIOptions({
-    method: 'GET',
-    auth: `Basic ${btoa(`${couchDetails.admin}:${couchDetails.password}`)}`
-  });
-
-  fetch(url, fetchOptions)
+  fetch(
+    utils.couchUserAddress(couch.baseURL, username),
+    utils.fetchAuthAPIOptions({method: 'GET'})
+  )
   
     .then(response => response.json()).then(json => {
       const subscriptions = json.subscriptions;

@@ -1,3 +1,5 @@
+import btoa from 'btoa';
+
 export const couchUserAddress = (baseURL, username) => `${baseURL}_users/org.couchdb.user:${username}`;
 export const defaultNewUserDoc = (name, password) => (
   {
@@ -15,7 +17,7 @@ export const fetchAuthAPIOptions = ({ method, data, auth }) => {
     headers: {
 		  "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: auth
+      Authorization: `Basic ${btoa(`${proccess.env.COUCH_ADMIN}:${proccess.env.COUCH_PASSWORD}`)}`
     }
    };
 
