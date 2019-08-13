@@ -1,5 +1,4 @@
 import express from 'express';
-import btoa from 'btoa';
 import fetch from 'node-fetch';
 import cors from 'cors';
 import webPush from 'web-push';
@@ -7,23 +6,27 @@ import fs from 'fs';
 
 import * as utils from './util/util';
 
+const PRODUCTION = process.env.NODE_ENV === "prod";
 const envFile = fs.readFileSync('cushionEnv.json');
 const envVars = JSON.parse(envFile);
 const vapidKeys = envVars['vapid-keys'];
-const appDetails = envVars.app;
+const couchBaseURL = PRODUCTION ? envVars.couch.URL : 'http://localhost:5984/';
 const couch = envVars.couch;
-const PORT = 3001;
 
 const server = express();
 
-server.use(cors({
-  origin: appDetails.URL
-}));
+if (!PRODUCTION) {
+  server.use(cors());
+} else {
+  server.use(cors({
+    origin: envVars.app.URL
+  }));
+}
 
 server.use(express.json());
 
 webPush.setVapidDetails(
-  `mailto:${appDetails.email}`,
+  `mailto:${envVars.app.email}`,
   vapidKeys.public,
   vapidKeys.private
 );
@@ -37,13 +40,13 @@ server.post('/signup', (req, res) => {
   const password = req.body.password;
 
   return fetch(
-    utils.couchUserAddress(couch.baseURL, username),
+    utils.couchUserAddress(couchBaseURL, username),
     utils.fetchAuthAPIOptions({
       method: 'PUT',
-      data
+      data: utils.defaultNewUserDoc(username, password)
     })
   )
-    
+
     .then(response => {
       res.status(response.status)
       return response.json();
@@ -62,7 +65,7 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
   const subscription = req.body.subscription;
   subscription.device = req.body.device;
 
-  const userCouchUrl = utils.couchUserAddress(couch.baseURL, username);
+  const userCouchUrl = utils.couchUserAddress(couchBaseURL, username);
 
   return fetch(
     userCouchUrl,
@@ -96,7 +99,7 @@ server.post('/trigger_update_user_devices', (req, res) => {
   const username = req.body.username;
 
   fetch(
-    utils.couchUserAddress(couch.baseURL, username),
+    utils.couchUserAddress(couchBaseURL, username),
     utils.fetchAuthAPIOptions({method: 'GET'})
   )
   
@@ -119,6 +122,4 @@ server.post('/trigger_update_user_devices', (req, res) => {
     });
 });
 
-server.listen(PORT, () => {
-  console.log(`Cushion server is running on ${PORT}`);
-});
+export default server;

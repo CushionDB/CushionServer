@@ -8,6 +8,8 @@
 		"email": "test@example.com"
 	},
 	"couch": {
-		"baseURL": "http://localhost:5984/"
+		"URL": "http://localhost:5984/",
+		"devAdmin": "admin",
+		"devPassword": "secret"
 	}
 }

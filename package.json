@@ -7,9 +7,11 @@
     "clean": "rm -rf build && mkdir build && mkdir build/util",
     "build-server": "babel ./server.js --out-dir ./build",
     "build-utils": "babel ./util/util.js --out-dir ./build/util",
-    "build": "npm run clean && npm run build-utils && npm run build-server",
-    "dev": "npm run build && node ./build/server.js",
-    "start": "node ./build/server.js"
+    "build-app": "babel app.js --out-dir ./build",
+    "build": "npm run clean && npm run build-utils && npm run build-server && npm run build-app",
+    "dev": "export NODE_ENV=dev&& npm run build && node ./build/app.js",
+    "start": "export NODE_ENV=prod&& node ./build/app.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -21,8 +23,9 @@
     "web-push": "^3.3.5"
   },
   "devDependencies": {
+    "@babel/cli": "^7.1.0",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
-    "@babel/cli": "^7.1.0"
+    "jest": "^24.8.0"
   }
 }
