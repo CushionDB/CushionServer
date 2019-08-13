@@ -54,7 +54,7 @@ server.post('/signup', (req, res) => {
 
     .then(json => res.send(json))
   
-    .catch(error => {
+    .catch(_ => {
       res.status(500)
       res.send({error: 'Database cannot be reached'});
     });
@@ -100,7 +100,7 @@ server.post('/trigger_update_user_devices', (req, res) => {
 
   fetch(
     utils.couchUserAddress(couchBaseURL, username),
-    utils.fetchAuthAPIOptions({method: 'GET'})
+    utils.fetchAuthAPIOptions({ method: 'GET' })
   )
   
     .then(response => response.json()).then(json => {
