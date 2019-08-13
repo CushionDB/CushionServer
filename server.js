@@ -8,12 +8,24 @@ const PRODUCTION = process.env.NODE_ENV === "prod";
 const envVars = utils.getEnvVars();
 const server = express();
 
+const cors = (req, res, next) => {
+  const whitelist = [
+    'http://localhost:',
+    'https://localhost:',
+  ];
+  const origin = req.headers.origin;
+  if (whitelist.indexOf(origin) > -1) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  next();
+}
+
 if (!PRODUCTION) {
   server.use(cors());
 } else {
-  server.use(cors({
-    origin: envVars.appURL
-  }));
+  server.use(cors);
 }
 
 server.use(express.json());
@@ -98,7 +110,7 @@ server.post('/trigger_update_user_devices', (req, res) => {
   
     .then(response => response.json()).then(json => {
       const subscriptions = json.subscriptions;
-      
+
       if (subscriptions.length === 0) {
         res.status(202);
         res.send({
