@@ -2,33 +2,26 @@ import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
 import webPush from 'web-push';
-import fs from 'fs';
-
 import * as utils from './util/util';
 
 const PRODUCTION = process.env.NODE_ENV === "prod";
-const envFile = fs.readFileSync('cushionEnv.json');
-const envVars = JSON.parse(envFile);
-const vapidKeys = envVars['vapid-keys'];
-const couchBaseURL = PRODUCTION ? envVars.couch.URL : 'http://localhost:5984/';
-const couch = envVars.couch;
-
+const envVars = utils.getEnvVars();
 const server = express();
 
 if (!PRODUCTION) {
   server.use(cors());
 } else {
   server.use(cors({
-    origin: envVars.app.URL
+    origin: envVars.appURL
   }));
 }
 
 server.use(express.json());
 
 webPush.setVapidDetails(
-  `mailto:${envVars.app.email}`,
-  vapidKeys.public,
-  vapidKeys.private
+  `mailto:${envVars.appEmail}`,
+  envVars.publicVapid,
+  envVars.privateVapid
 );
 
 server.get('/', (req, res) => {
@@ -40,7 +33,7 @@ server.post('/signup', (req, res) => {
   const password = req.body.password;
 
   return fetch(
-    utils.couchUserAddress(couchBaseURL, username),
+    utils.couchUserAddress(envVars.couchBaseURL, username),
     utils.fetchAuthAPIOptions({
       method: 'PUT',
       data: utils.defaultNewUserDoc(username, password)
@@ -65,7 +58,7 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
   const subscription = req.body.subscription;
   subscription.device = req.body.device;
 
-  const userCouchUrl = utils.couchUserAddress(couchBaseURL, username);
+  const userCouchUrl = utils.couchUserAddress(envVars.couchBaseURL, username);
 
   return fetch(
     userCouchUrl,
@@ -99,12 +92,20 @@ server.post('/trigger_update_user_devices', (req, res) => {
   const username = req.body.username;
 
   fetch(
-    utils.couchUserAddress(couchBaseURL, username),
+    utils.couchUserAddress(envVars.couchBaseURL, username),
     utils.fetchAuthAPIOptions({ method: 'GET' })
   )
   
     .then(response => response.json()).then(json => {
       const subscriptions = json.subscriptions;
+      
+      if (subscriptions.length === 0) {
+        res.status(202);
+        res.send({
+          "User has no subscriptions"
+        });
+      }
+
       const payload = JSON.stringify({
         action: 'SYNC',
         title: 'Sync device'
@@ -114,6 +115,10 @@ server.post('/trigger_update_user_devices', (req, res) => {
         webPush.sendNotification(sub, payload);
       });
 
+      res.status(200);
+      res.send({
+        ok: true
+      });
     })
 
     .catch(_ => {

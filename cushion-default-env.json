@@ -1,0 +1,9 @@
+{
+  "privateVapid": "d06XlKrpPtkRrYc0EyEXZ2r2k14H1vUkj5GfOoEate0",
+  "publicVapid": "BCA04yoTGRbqfe__mD3jXmNxYWCKF2jcPY4Kbas7GqV3o7vS43kahAucdIQF_aFix1mCkkGQzRwqob53atFxHJg",
+  "appURL": "http://localhost:3000",
+  "appEmail": "test@example.com",
+  "couchBaseURL": "http://localhost:5984/",
+  "couchAdmin": "admin",
+  "couchPassword": "secret"
+ }

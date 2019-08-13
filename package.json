@@ -9,8 +9,8 @@
     "build-utils": "babel ./util/util.js --out-dir ./build/util",
     "build-app": "babel app.js --out-dir ./build",
     "build": "npm run clean && npm run build-utils && npm run build-server && npm run build-app",
-    "dev": "export NODE_ENV=dev&& npm run build && node ./build/app.js",
-    "start": "export NODE_ENV=prod&& node ./build/app.js",
+    "dev": "npm run build && node ./build/app.js",
+    "start": "node ./build/app.js",
     "test": "jest"
   },
   "author": "",

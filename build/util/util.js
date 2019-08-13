@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addSubscriptionToUserDoc = exports.fetchAuthAPIOptions = exports.defaultNewUserDoc = exports.couchUserAddress = void 0;
+exports.getEnvVars = exports.addSubscriptionToUserDoc = exports.fetchAuthAPIOptions = exports.defaultNewUserDoc = exports.couchUserAddress = void 0;
 
 var _btoa = _interopRequireDefault(require("btoa"));
 
@@ -25,18 +25,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var PRODUCTION = process.env.NODE_ENV === "prod";
-
-var envFile = _fs["default"].readFileSync('cushionEnv.json');
-
-var envVars = JSON.parse(envFile);
-var couchAuth = PRODUCTION ? {
-  admin: process.env.COUCH_ADMIN,
-  password: process.env.COUCH_PASSWORD
-} : {
-  admin: envVars.couch.devAdmin,
-  password: envVars.couch.devPassword
-};
+var envVars;
 
 var couchUserAddress = function couchUserAddress(baseURL, username) {
   return "".concat(baseURL, "_users/org.couchdb.user:").concat(username);
@@ -60,13 +49,13 @@ var fetchAuthAPIOptions = function fetchAuthAPIOptions(_ref) {
   var method = _ref.method,
       data = _ref.data,
       auth = _ref.auth;
-  console.log(couchAuth);
+  var environmentVars = getEnvVars();
   var opts = {
     method: method,
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: "Basic ".concat((0, _btoa["default"])("".concat(couchAuth.admin, ":").concat(couchAuth.password)))
+      Authorization: "Basic ".concat((0, _btoa["default"])("".concat(environmentVars.couchAdmin, ":").concat(environmentVars.couchPassword)))
     }
   };
   return data ? _objectSpread({}, opts, {
@@ -78,8 +67,38 @@ exports.fetchAuthAPIOptions = fetchAuthAPIOptions;
 
 var addSubscriptionToUserDoc = function addSubscriptionToUserDoc(userDoc, sub) {
   return _objectSpread({}, userDoc, {
-    subscriptions: [].concat(_toConsumableArray(subscriptions), [sub])
+    subscriptions: [].concat(_toConsumableArray(userDoc.subscriptions), [sub])
   });
 };
 
 exports.addSubscriptionToUserDoc = addSubscriptionToUserDoc;
+
+var getEnvVars = function getEnvVars() {
+  if (envVars) return envVars;
+  var PRODUCTION = process.env.NODE_ENV === "prod";
+
+  if (PRODUCTION) {
+    envVars = createEnvObject();
+  } else {
+    var envFile = _fs["default"].readFileSync('cushion-default-env.json');
+
+    envVars = JSON.parse(envFile);
+  }
+
+  return envVars;
+};
+
+exports.getEnvVars = getEnvVars;
+
+var createEnvObject = function createEnvObject() {
+  var env = process.env;
+  return {
+    privateVapid: env.PRIVATE_VAPID,
+    publicVapid: env.PUBLIC_VAPID,
+    appURL: env.APP_URL,
+    appEmail: env.APP_EMAIL,
+    couchBaseURL: env.COUCH_BASE_URL,
+    couchAdmin: env.COUCH_ADMIN,
+    couchPassword: env.COUCH_PASSWORD
+  };
+};

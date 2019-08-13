@@ -1,18 +1,7 @@
 import btoa from 'btoa';
 import fs from 'fs';
 
-const PRODUCTION = process.env.NODE_ENV === "prod";
-
-const envFile = fs.readFileSync('cushionEnv.json');
-const envVars = JSON.parse(envFile);
-
-const couchAuth = PRODUCTION ? {
-	admin: process.env.COUCH_ADMIN,
-	password: process.env.COUCH_PASSWORD
-} : {
-	admin: envVars.couch.devAdmin,
-	password: envVars.couch.devPassword
-};
+let envVars;
 
 export const couchUserAddress = (baseURL, username) => `${baseURL}_users/org.couchdb.user:${username}`;
 export const defaultNewUserDoc = (name, password) => (
@@ -26,22 +15,58 @@ export const defaultNewUserDoc = (name, password) => (
 )
 
 export const fetchAuthAPIOptions = ({ method, data, auth }) => {
+  const environmentVars = getEnvVars();
+
 	const opts = {		
 		method,
     headers: {
 		  "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: `Basic ${btoa(`${couchAuth.admin}:${couchAuth.password}`)}`
+      Authorization: `Basic ${btoa(`${
+        environmentVars.couchAdmin
+      }:${
+        environmentVars.couchPassword
+      }`)}`
     }
    };
 
   return data ? { ...opts, body: JSON.stringify(data) } : opts;
 }
 
-export const addSubscriptionToUserDoc = (userDoc, sub) => ({
-	...userDoc,
-	subscriptions: [
-		...subscriptions,
-		sub
-	]
-})
+export const addSubscriptionToUserDoc = (userDoc, sub) => {
+  return {
+  	...userDoc,
+  	subscriptions: [
+  		...userDoc.subscriptions,
+  		sub
+  	]
+  }
+}
+
+export const getEnvVars = () => {
+  if (envVars) return envVars;
+
+  const PRODUCTION = process.env.NODE_ENV === "prod";
+
+  if (PRODUCTION) {
+    envVars = createEnvObject();
+  } else {
+    const envFile = fs.readFileSync('cushion-default-env.json');
+    envVars = JSON.parse(envFile);
+  }
+
+  return envVars;
+};
+
+const createEnvObject = () => {
+  const env = process.env;
+  return  {
+    privateVapid: env.PRIVATE_VAPID,
+    publicVapid: env.PUBLIC_VAPID,
+    appURL: env.APP_URL,
+    appEmail: env.APP_EMAIL,
+    couchBaseURL: env.COUCH_BASE_URL,
+    couchAdmin: env.COUCH_ADMIN,
+    couchPassword: env.COUCH_PASSWORD
+  }
+}
