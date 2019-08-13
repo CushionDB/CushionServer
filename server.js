@@ -8,7 +8,7 @@ const PRODUCTION = process.env.NODE_ENV === "prod";
 const envVars = utils.getEnvVars();
 const server = express();
 
-const cors = (req, res, next) => {
+const prodCors = (req, res, next) => {
   const whitelist = [
     'http://localhost:',
     'https://localhost:',
@@ -25,7 +25,7 @@ const cors = (req, res, next) => {
 if (!PRODUCTION) {
   server.use(cors());
 } else {
-  server.use(cors);
+  server.use(prodCors);
 }
 
 server.use(express.json());
@@ -58,7 +58,7 @@ server.post('/signup', (req, res) => {
     })
 
     .then(json => res.send(json))
-  
+
     .catch(_ => {
       res.status(500)
       res.send({error: 'Database cannot be reached'});
@@ -107,15 +107,13 @@ server.post('/trigger_update_user_devices', (req, res) => {
     utils.couchUserAddress(envVars.couchBaseURL, username),
     utils.fetchAuthAPIOptions({ method: 'GET' })
   )
-  
+
     .then(response => response.json()).then(json => {
       const subscriptions = json.subscriptions;
 
       if (subscriptions.length === 0) {
         res.status(202);
-        res.send({
-          "User has no subscriptions"
-        });
+        res.send("User has no subscriptions");
       }
 
       const payload = JSON.stringify({

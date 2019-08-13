@@ -1,0 +1,6 @@
+curl -X PUT db:5984/_users -H "${AUTH_HEADER}" &&
+curl -X PUT db:5984/_replicator -H "${AUTH_HEADER}" &&
+curl -X PUT db:5984/_global_changes -H "${AUTH_HEADER}" &&
+curl -X PUT db:5984/_node/_local/_config/couch_peruser/enable -H "${AUTH_HEADER}" -d '"true"' &&
+curl -X PUT db:5984/_node/_local/_config/couch_peruser/database_prefix -H "${AUTH_HEADER}" -d '"cushion_"' &&
+curl -X PUT db:5984/_node/_local/_config/couch_peruser/delete_dbs -H "${AUTH_HEADER}" -d '"true"'
