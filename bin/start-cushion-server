@@ -8,4 +8,4 @@ if [ $STATUS -eq 404 ]; then
   ./couchConfig
 fi
 
-node ../dist/main.js
+npm start

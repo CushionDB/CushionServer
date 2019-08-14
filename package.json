@@ -2,15 +2,11 @@
   "name": "cushion-server-master",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "scripts": {
-    "clean": "rm -rf build && mkdir build && mkdir build/util",
-    "build-server": "babel ./src/server.js --out-dir ./build",
-    "build-utils": "babel ./src/utils/utils.js --out-dir ./build/utils",
-    "build-app": "babel app.js --out-dir ./build",
-    "build": "npm run clean && npm run build-utils && npm run build-server && npm run build-app",
-    "dev": "npm run build && node ./build/app.js",
-    "start": "node ./build/app.js",
+    "build": "npx webpack",
+    "dev": "npx webpack-dev-server",
+    "start": "node ./dist/main.js",
     "test": "jest"
   },
   "author": "",
@@ -23,7 +19,6 @@
     "web-push": "^3.3.5"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.0",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
