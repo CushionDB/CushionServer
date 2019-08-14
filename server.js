@@ -8,8 +8,6 @@ const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
 const server = express();
 
-console.log(envVars);
-
 const prodCors = (req, res, next) => {
   const origin = req.headers.origin;
   if (envVars.allowedOrigins.indexOf(origin) > -1) {
