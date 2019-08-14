@@ -2,17 +2,15 @@ import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
 import webPush from 'web-push';
-import * as utils from './utils/utils';
+import * as utils from './util/util';
 
 const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
 const server = express();
 
-console.log(envVars);
-
 const prodCors = (req, res, next) => {
   const origin = req.headers.origin;
-  if (envVars.appAddress.indexOf(origin) > -1) {
+  if (envVars.allowedOrigins.indexOf(origin) > -1) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
