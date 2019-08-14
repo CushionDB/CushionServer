@@ -10,7 +10,7 @@ const server = express();
 
 const prodCors = (req, res, next) => {
   const origin = req.headers.origin;
-  if (envVars.allowedOrigins.indexOf(origin) > -1) {
+  if (envVars.appAddress.indexOf(origin) > -1) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
