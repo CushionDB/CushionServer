@@ -46,7 +46,7 @@ export const addSubscriptionToUserDoc = (userDoc, sub) => {
 export const getEnvVars = () => {
   if (envVars) return envVars;
 
-  const PRODUCTION = process.env.NODE_ENV === "prod";
+  const PRODUCTION = process.env.NODE_ENV === "production";
 
   if (PRODUCTION) {
     envVars = createEnvObject();
@@ -66,6 +66,7 @@ const createEnvObject = () => {
     appEmail: env.APP_EMAIL,
     couchBaseURL: env.COUCH_BASE_URL,
     couchAdmin: env.COUCHDB_USER,
-    couchPassword: env.COUCHDB_PASSWORD
+    couchPassword: env.COUCHDB_PASSWORD,
+    appAddress: env.APP_ADDRESS
   }
 }

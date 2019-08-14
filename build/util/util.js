@@ -75,7 +75,7 @@ exports.addSubscriptionToUserDoc = addSubscriptionToUserDoc;
 
 var getEnvVars = function getEnvVars() {
   if (envVars) return envVars;
-  var PRODUCTION = process.env.NODE_ENV === "prod";
+  var PRODUCTION = process.env.NODE_ENV === "production";
 
   if (PRODUCTION) {
     envVars = createEnvObject();
@@ -98,6 +98,7 @@ var createEnvObject = function createEnvObject() {
     appEmail: env.APP_EMAIL,
     couchBaseURL: env.COUCH_BASE_URL,
     couchAdmin: env.COUCHDB_USER,
-    couchPassword: env.COUCHDB_PASSWORD
+    couchPassword: env.COUCHDB_PASSWORD,
+    allowedOrigins: env.ALLOWED_ORIGINS.split(',')
   };
 };

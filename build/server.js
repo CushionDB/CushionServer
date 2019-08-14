@@ -19,15 +19,15 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var PRODUCTION = process.env.NODE_ENV === "prod";
+var PRODUCTION = process.env.NODE_ENV === "production";
 var envVars = utils.getEnvVars();
 var server = (0, _express["default"])();
+console.log(envVars);
 
 var prodCors = function prodCors(req, res, next) {
-  var whitelist = ['http://localhost', 'https://localhost'];
   var origin = req.headers.origin;
 
-  if (whitelist.indexOf(origin) > -1) {
+  if (envVars.allowedOrigins.indexOf(origin) > -1) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
 
@@ -61,6 +61,7 @@ server.post('/signup', function (req, res) {
   }).then(function (json) {
     return res.send(json);
   })["catch"](function (_) {
+    console.log(_);
     res.status(500);
     res.send({
       error: 'Database cannot be reached'

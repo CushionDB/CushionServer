@@ -4,17 +4,15 @@ import cors from 'cors';
 import webPush from 'web-push';
 import * as utils from './util/util';
 
-const PRODUCTION = process.env.NODE_ENV === "prod";
+const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
 const server = express();
 
+console.log(envVars);
+
 const prodCors = (req, res, next) => {
-  const whitelist = [
-    'http://localhost',
-    'https://localhost',
-  ];
   const origin = req.headers.origin;
-  if (whitelist.indexOf(origin) > -1) {
+  if (envVars.allowedOrigins.indexOf(origin) > -1) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -60,6 +58,7 @@ server.post('/signup', (req, res) => {
     .then(json => res.send(json))
 
     .catch(_ => {
+      console.log(_);
       res.status(500)
       res.send({error: 'Database cannot be reached'});
     });
