@@ -6,4 +6,4 @@ COPY . .
 EXPOSE 3001
 RUN npm run build
 RUN apk --no-cache add curl
-CMD ["./runCushion"]
+CMD ["./bin/start-cushion-server"]

@@ -2,7 +2,7 @@ import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
 import webPush from 'web-push';
-import * as utils from './util/util';
+import * as utils from './utils/utils';
 
 const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
