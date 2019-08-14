@@ -4,5 +4,5 @@
   "appEmail": "test@example.com",
   "couchBaseURL": "http://localhost:5984/",
   "couchAdmin": "admin",
-  "couchPassword": "admin"
+  "couchPassword": "secret"
  }

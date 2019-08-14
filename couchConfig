@@ -1,5 +1,3 @@
-#!/bin/bash
-
 AUTH_HEADER="Authorization: Basic $(printf ${COUCHDB_USER}:${COUCHDB_PASSWORD} | base64)"
 
 curl -X PUT backend:5984/_users -H "${AUTH_HEADER}" &&
