@@ -1,6 +1,6 @@
 {
-  "privateVapid": "d06XlKrpPtkRrYc0EyEXZ2r2k14H1vUkj5GfOoEate0",
-  "publicVapid": "BCA04yoTGRbqfe__mD3jXmNxYWCKF2jcPY4Kbas7GqV3o7vS43kahAucdIQF_aFix1mCkkGQzRwqob53atFxHJg",
+  "privateVapid": "indC_g9HmIEZLUlagR-M_KmG8Kj84RRAPFzwGfIEDdo",
+  "publicVapid": "BP_QrGDbKkoFatPv0iiMEfl5XINAZSknNz171ID_uNXmmA5_bRnmGgt7zqfyDOgzwptrG9w0lqEU94ru34teLQU",
   "appEmail": "test@example.com",
   "couchBaseURL": "http://localhost:5984/",
   "couchAdmin": "admin",

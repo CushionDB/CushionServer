@@ -8,8 +8,6 @@ const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
 const server = express();
 
-console.log(envVars);
-
 const prodCors = (req, res, next) => {
   const origin = req.headers.origin;
   if (envVars.appAddress.indexOf(origin) > -1) {
@@ -58,7 +56,6 @@ server.post('/signup', (req, res) => {
     .then(json => res.send(json))
 
     .catch(_ => {
-      console.log(_);
       res.status(500)
       res.send({error: 'Database cannot be reached'});
     });

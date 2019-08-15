@@ -8,6 +8,9 @@ module.exports = {
     filename: 'main.js',
     publicPath: '/assets'
   },
+  devServer: {
+    port: 3001
+  },
   module: {
     rules: [
       {

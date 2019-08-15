@@ -48,8 +48,6 @@ export const getEnvVars = () => {
 
   const PRODUCTION = process.env.NODE_ENV === "production";
 
-  console.log(process.env);
-
   if (PRODUCTION) {
     envVars = createEnvObject();
   } else {
