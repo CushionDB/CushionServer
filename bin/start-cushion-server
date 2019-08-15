@@ -5,7 +5,9 @@ until curl -s -f backend:5984 -H "${AUTH_HEADER}"; do sleep 1; done
 STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://backend:5984/_users -H "${AUTH_HEADER}")
 
 if [ $STATUS -eq 404 ]; then
-  ./bin/couchConfig
+  ./bin/couchConfig > /dev/util
 fi
+
+export NODE_NO_WARNINGS=1
 
 npm start
