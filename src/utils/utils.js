@@ -1,5 +1,4 @@
 import btoa from 'btoa';
-import fs from 'fs';
 
 let envVars;
 
@@ -51,8 +50,7 @@ export const getEnvVars = () => {
   if (PRODUCTION) {
     envVars = createEnvObject();
   } else {
-    const envFile = fs.readFileSync('cushion-default-env.json');
-    envVars = JSON.parse(envFile);
+    envVars = require('../../cushion-default-env.json');
   }
 
   return envVars;

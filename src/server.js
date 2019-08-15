@@ -96,6 +96,38 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
     });
 });
 
+server.get('/is_subscribed_to_push/:username', (req, res) => {
+  const username = req.params.username
+
+  console.log(username);
+
+  fetch(
+    utils.couchUserAddress(envVars.couchBaseURL, username),
+    utils.fetchAuthAPIOptions({method: 'GET'})
+  )
+
+    .then(response => response.json()).then(json => {
+      const subscriptions = json.subscriptions;
+
+      if (subscriptions.length > 0) {
+        res.send({
+          ok: true,
+          subscribed: true
+        });
+      } else {
+        res.send({
+          ok: true,
+          subscribed: false
+        })
+      }
+    })
+
+    .catch(_ => {
+      res.status(500);
+      res.send({error: 'Database cannot be reached'});
+    });
+});
+
 server.post('/trigger_update_user_devices', (req, res) => {
   const username = req.body.username;
 
