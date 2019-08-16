@@ -2,7 +2,7 @@
 
 # Overview
 
-CushionServer is part 1 of 2 for the CushionDB backend. It is setup as a Docker image and is deployed along with the [CushionCouch](https://github.com/CushionDB/CushionCouchDocker) Docker image using Docker Compose. This allows for simple deployment and configuration.
+CushionServer is part 1 of 2 for the CushionDB backend. It is setup as a Docker image and is deployed along with the [CushionCouch](https://github.com/CushionDB/CushionCouchDocker) Docker image using Docker Compose. These two backend components are desgined to work with [CushionClient](https://github.com/CushionDB/CushionClient).
 
 CushionServer was built to abstract away the authentication details from CouchDB for user account management. It is also used to facilitate [PWA push notifications](https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications), which CushionDB uses to automatically sync data across mutliple devices
 
