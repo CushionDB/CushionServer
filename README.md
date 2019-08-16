@@ -14,4 +14,14 @@ The CushionServer container is built and run on your server automatically once y
 
 ## Setup
 
-From inside of the [CushionDocker](https://github.com/CushionDB/CushionDocker) directory, you will run `cushion-backend-init`, which will prompt you to input information that will be used for networking between the client and the backend, setting up CouchDB authentication details and push notification keys.
+From inside the [CushionDocker](https://github.com/CushionDB/CushionDocker) directory, you will run `cushion-backend-init`, which will prompt you to input information that will be used for networking between the client and the backend, CouchDB authentication details and push notification keys.
+
+<p align="center"><img src="https://cushiondb.github.io/img/cushion-init.gif"></p>
+
+# The Team
+
+[Avshar Kirksall]() *Software Engineer* Brooklyn, NY
+
+[Jaron Truman]() *Software Engineer* Las Vegas, NV
+
+[Daniel Rote]() *Software Engineer* Seattle, WA
