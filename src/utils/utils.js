@@ -16,6 +16,7 @@ export const defaultNewUserDoc = (name, password) => (
 export const fetchAuthAPIOptions = ({ method, data, auth }) => {
   const environmentVars = getEnvVars();
 
+
 	const opts = {		
 		method,
     headers: {
@@ -39,6 +40,13 @@ export const addSubscriptionToUserDoc = (userDoc, sub) => {
   		...userDoc.subscriptions,
   		sub
   	]
+  }
+}
+
+export const editUserDoc = (userDoc, attrs) => {
+  return {
+    ...userDoc,
+    ...attrs
   }
 }
 

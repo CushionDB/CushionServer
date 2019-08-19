@@ -5,7 +5,7 @@
   "main": "./dist/main.js",
   "scripts": {
     "build": "npx webpack",
-    "dev": "npx webpack-dev-server",
+    "dev": "npx webpack-dev-server --mode=development",
     "start": "node ./dist/main.js",
     "test": "jest"
   },

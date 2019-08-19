@@ -2,6 +2,8 @@ import server from './server';
 
 const PORT = 3001;
 
+  console.log('something from index');
+
 server.listen(PORT, () => {
   console.log(`Cushion server is running on ${PORT}`);
 

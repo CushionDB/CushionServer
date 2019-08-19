@@ -8,6 +8,9 @@ const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
 const server = express();
 
+console.log('loging vars');
+
+
 const prodCors = (req, res, next) => {
   const origin = req.headers.origin;
   if (envVars.appAddress.indexOf(origin) > -1) {
@@ -164,5 +167,37 @@ server.post('/trigger_update_user_devices', (req, res) => {
       res.send({error: 'Database cannot be reached'});
     });
 });
+
+server.post('/updatePassword', (req, res) => { 
+  const username = req.body.name;
+  const newPassword = req.body.password;
+
+  fetch(
+    utils.couchUserAddress(envVars.couchBaseURL, username),
+    utils.fetchAuthAPIOptions({
+      method:'GET'
+    }))
+    .then( response => response.json() )
+    .then( jsonRes => {
+      return fetch(
+        utils.couchUserAddress(envVars.couchBaseURL, username),
+        utils.fetchAuthAPIOptions({ 
+          method: 'PUT', 
+          data: utils.editUserDoc(jsonRes, { password: newPassword })
+        }))
+    })
+    .then(response => {
+      res.status(response.status)
+      return response.json();
+    })
+
+    .then(json => res.send(json))
+
+    .catch(_ => {
+      res.status(500)
+      res.send({error: 'Database cannot be reached'});
+    });
+});
+
 
 export default server;
