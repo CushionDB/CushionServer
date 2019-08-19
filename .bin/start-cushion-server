@@ -10,4 +10,4 @@ fi
 
 export NODE_NO_WARNINGS=1
 
-npm start
+node ./dist/main.js

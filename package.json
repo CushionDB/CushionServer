@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npx webpack",
     "dev": "npx webpack-dev-server --mode=development",
-    "start": "node ./dist/main.js",
+    "start": "./.bin/start-cushion-server",
     "test": "jest"
   },
   "author": "",
