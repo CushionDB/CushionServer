@@ -7,4 +7,4 @@ COPY . .
 RUN npx webpack
 RUN npm uninstall -D
 EXPOSE 3001
-CMD ["./bin/start-cushion-server"]
+CMD ["npm","start"]
