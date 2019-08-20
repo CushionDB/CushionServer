@@ -1,7 +1,7 @@
 {
-  "name": "cushion-server-master",
-  "version": "1.0.0",
-  "description": "",
+  "name": "cushiondb-server",
+  "version": "0.0.1",
+  "description": "Cushion DBs internal server.",
   "main": "./dist/main.js",
   "scripts": {
     "build": "npx webpack",
