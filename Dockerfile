@@ -4,7 +4,7 @@ COPY package*.json ./
 RUN apk --no-cache add curl
 RUN npm install
 COPY . .
-RUN npm build
+RUN npm run build
 RUN npm uninstall -D
 EXPOSE 3001
 CMD ["npm","start"]

@@ -4,12 +4,8 @@ import cors from 'cors';
 import webPush from 'web-push';
 import * as utils from './utils/utils';
 
-const PRODUCTION = process.env.NODE_ENV === "production";
 const envVars = utils.getEnvVars();
 const server = express();
-
-console.log('loging vars');
-
 
 const prodCors = (req, res, next) => {
   const origin = req.headers.origin;
@@ -21,7 +17,7 @@ const prodCors = (req, res, next) => {
   next();
 }
 
-if (!PRODUCTION) {
+if (process.env.NODE_ENV !== "production") {
   server.use(cors());
 } else {
   server.use(prodCors);
@@ -36,7 +32,7 @@ webPush.setVapidDetails(
 );
 
 server.get('/', (req, res) => {
-  res.send('CushionServer is running');
+  res.send('CushionServer is running here');
 })
 
 server.post('/signup', (req, res) => {
@@ -51,17 +47,17 @@ server.post('/signup', (req, res) => {
     })
   )
 
-    .then(response => {
-      res.status(response.status)
-      return response.json();
-    })
+  .then(response => {
+    res.status(response.status)
+    return response.json();
+  })
 
-    .then(json => res.send(json))
+  .then(json => res.send(json))
 
-    .catch(_ => {
-      res.status(500)
-      res.send({error: 'Database cannot be reached'});
-    });
+  .catch(_ => {
+    res.status(500)
+    res.send({error: 'Database cannot be reached'});
+  });
 });
 
 server.post('/subscribe_device_to_notifications', (req, res) => {
@@ -76,96 +72,100 @@ server.post('/subscribe_device_to_notifications', (req, res) => {
     utils.fetchAuthAPIOptions({ method: 'GET' })
   )
 
-    .then(response => response.json()).then(userDoc => {
-      return fetch(
-        userCouchUrl,
-        utils.fetchAuthAPIOptions({
-          method: 'PUT',
-          data: utils.addSubscriptionToUserDoc(userDoc, subscription),
-        })
-      )
+  .then(response => response.json())
+  .then(userDoc => {
+    return fetch(
+      userCouchUrl,
+      utils.fetchAuthAPIOptions({
+        method: 'PUT',
+        data: utils.addSubscriptionToUserDoc(userDoc, subscription),
+      })
+    );
+  })
 
-        .then(response => {
-          res.status(response.status);
-          return response.json();
-        }).then(
-          json => res.send(json)
-        );
-    })
+  .then(response => {
+    res.status(response.status);
+    return response.json();
+  })
 
-    .catch(_ => {
-      res.status(500);
-      res.send({error: 'Database cannot be reached'});
-    });
+  .then(json => res.send(json))
+
+  .catch(_ => {
+    res.status(500);
+    res.send({error: 'Database cannot be reached'});
+  });
 });
 
 server.get('/is_subscribed_to_push/:username', (req, res) => {
   const username = req.params.username
-
-  console.log(username);
-
-  fetch(
-    utils.couchUserAddress(envVars.couchBaseURL, username),
-    utils.fetchAuthAPIOptions({method: 'GET'})
-  )
-
-    .then(response => response.json()).then(json => {
-      const subscriptions = json.subscriptions;
-
-      if (subscriptions.length > 0) {
-        res.send({
-          ok: true,
-          subscribed: true
-        });
-      } else {
-        res.send({
-          ok: true,
-          subscribed: false
-        })
-      }
-    })
-
-    .catch(_ => {
-      res.status(500);
-      res.send({error: 'Database cannot be reached'});
-    });
-});
-
-server.post('/trigger_update_user_devices', (req, res) => {
-  const username = req.body.username;
 
   fetch(
     utils.couchUserAddress(envVars.couchBaseURL, username),
     utils.fetchAuthAPIOptions({ method: 'GET' })
   )
 
-    .then(response => response.json()).then(json => {
-      const subscriptions = json.subscriptions;
+  .then(response => response.json()).then(json => {
+    const subscriptions = json.subscriptions;
 
-      if (subscriptions.length === 0) {
-        res.status(202);
-        res.send("User has no subscriptions");
-      }
-
-      const payload = JSON.stringify({
-        action: 'SYNC',
-        title: 'Sync device'
-      });
-
-      subscriptions.forEach(sub => {
-        webPush.sendNotification(sub, payload);
-      });
-
-      res.status(200);
+    if (subscriptions.length > 0) {
       res.send({
-        ok: true
+        ok: true,
+        subscribed: true
       });
-    })
-
-    .catch(_ => {
-      res.status(500);
-      res.send({error: 'Database cannot be reached'});
+      return;
+    }
+    
+    res.send({
+      ok: true,
+      subscribed: false
     });
+  })
+
+  .catch(_ => {
+    res.status(500);
+    res.send({error: 'Database cannot be reached'});
+  });
+});
+
+server.post('/trigger_update_user_devices', (req, res) => {
+  const username = req.body.username;
+  const device = req.body.device;
+
+  fetch(
+    utils.couchUserAddress(envVars.couchBaseURL, username),
+    utils.fetchAuthAPIOptions({ method: 'GET' })
+  )
+
+  .then(response => response.json())
+  .then(json => {
+    const subscriptions = json.subscriptions;
+
+    if (subscriptions.length === 0) {
+      res.status(202);
+      res.send("User has no subscriptions");
+    }
+
+    const payload = JSON.stringify({
+      action: 'SYNC',
+      title: 'Sync device'
+    });
+
+    subscriptions.forEach(sub => {
+      if (sub.device != device) {
+        webPush.sendNotification(sub, payload);
+      }
+    });
+
+    res.status(200);
+    res.send({
+      ok: true
+    });
+  })
+
+  .catch(_ => {
+    res.status(500);
+    res.send({error: 'Database cannot be reached'});
+  });
 });
 
 server.post('/updatePassword', (req, res) => { 
@@ -174,20 +174,21 @@ server.post('/updatePassword', (req, res) => {
 
   fetch(
     utils.couchUserAddress(envVars.couchBaseURL, username),
-    utils.fetchAuthAPIOptions({
-      method:'GET'
-    }))
-    .then( response => response.json() )
-    .then( jsonRes => {
+    utils.fetchAuthAPIOptions({ method: 'GET' })
+    )
+    
+    .then(response => response.json())
+    .then(json => {
       return fetch(
         utils.couchUserAddress(envVars.couchBaseURL, username),
         utils.fetchAuthAPIOptions({ 
           method: 'PUT', 
-          data: utils.editUserDoc(jsonRes, { password: newPassword })
+          data: utils.editUserDoc(json, { password: newPassword })
         }))
     })
+
     .then(response => {
-      res.status(response.status)
+      res.status(response.status);
       return response.json();
     })
 
@@ -198,6 +199,5 @@ server.post('/updatePassword', (req, res) => {
       res.send({error: 'Database cannot be reached'});
     });
 });
-
 
 export default server;

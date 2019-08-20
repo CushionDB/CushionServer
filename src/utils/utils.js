@@ -3,15 +3,15 @@ import btoa from 'btoa';
 let envVars;
 
 export const couchUserAddress = (baseURL, username) => `${baseURL}_users/org.couchdb.user:${username}`;
-export const defaultNewUserDoc = (name, password) => (
-  {
+export const defaultNewUserDoc = (name, password) => {
+  return {
     name,
     password,
     roles: [],
     type: "user",
     subscriptions: [],
   }
-)
+}
 
 export const fetchAuthAPIOptions = ({ method, data, auth }) => {
   const environmentVars = getEnvVars();
@@ -40,22 +40,20 @@ export const addSubscriptionToUserDoc = (userDoc, sub) => {
   		...userDoc.subscriptions,
   		sub
   	]
-  }
+  };
 }
 
 export const editUserDoc = (userDoc, attrs) => {
   return {
     ...userDoc,
     ...attrs
-  }
+  };
 }
 
 export const getEnvVars = () => {
   if (envVars) return envVars;
 
-  const PRODUCTION = process.env.NODE_ENV === "production";
-
-  if (PRODUCTION) {
+  if (process.env.NODE_ENV === "production") {
     envVars = createEnvObject();
   } else {
     envVars = require('../../cushion-default-env.json');
