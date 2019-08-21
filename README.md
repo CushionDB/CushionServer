@@ -10,11 +10,13 @@ CushionServer was built to abstract away the authentication details from CouchDB
 
 ## Install
 
-The CushionServer container is built and run on your server automatically once you have cloned [CushionDocker](https://github.com/CushionDB/CushionDocker) and go through the setup steps.
+We reccomend that you head over to [CushionBackend](https://github.com/CushionDB/CushionBackend) and follow the installation steps in that repository as that is the easiest to get the CushionServer and CushionCouch database up and running.
 
 ## Setup
 
-From inside the [CushionDocker](https://github.com/CushionDB/CushionDocker) directory, you will run `cushion-backend-init`, which will prompt you to input information that will be used for networking between the client and the backend, CouchDB authentication details and push notification keys.
+To install outside of a container run `npm install cushiondb-server`. Add the app's dev dependencies to your packege-json and install them, and then run `npm run dev` which will load the server through webpack's dev server.`npm start` is not currently meant to run outside of production.
+
+Head over to [CushionCouch](https://github.com/CushionDB/CushionCouchDocker) to run CushionDB's couchDB docker image. Running CouchDB manually will require changing CouchDB's configurations and is not recommended.
 
 <p align="center"><img src="https://cushiondb.github.io/img/cushion-backend-init.gif"></p>
 
