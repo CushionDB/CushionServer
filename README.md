@@ -22,7 +22,8 @@ Head over to [CushionCouch](https://github.com/CushionDB/CushionCouchDocker) to 
 
 # The Team
 
-[Avshar Kirksall]() *Software Engineer* Brooklyn, NY
+[Avshar Kirksall](https://avshrk.github.io/
+) *Software Engineer* Brooklyn, NY
 
 [Jaron Truman]() *Software Engineer* Las Vegas, NV
 
