@@ -1,4 +1,6 @@
-import server from './server';
+const server = require('./server');
+const https = require('https');
+const fs = require('fs');
 
 const PORT = 3001;
 

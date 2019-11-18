@@ -1,8 +1,8 @@
-import express from 'express';
-import fetch from 'node-fetch';
-import cors from 'cors';
-import webPush from 'web-push';
-import * as utils from './utils/utils';
+const express =  require('express');
+const fetch =  require('node-fetch');
+const cors =  require('cors');
+const webPush =  require('web-push');
+const utils =  require('./utils/utils');
 
 const envVars = utils.getEnvVars();
 const server = express();
@@ -200,4 +200,4 @@ server.post('/updatePassword', (req, res) => {
     });
 });
 
-export default server;
+module.exports = server;
