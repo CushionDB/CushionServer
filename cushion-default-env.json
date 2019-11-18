@@ -5,5 +5,6 @@
   "couchBaseURL": "http://localhost:5984/",
   "couchAdmin": "admin",
   "couchPassword": "admin",
-  "appAddress": "http://localhost:8080"
+  "appAddress": "http://localhost:8080",
+  "httpsPass": "Cushion"
  }
